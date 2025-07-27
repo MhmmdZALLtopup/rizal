@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Attack Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      color: #ff3c78;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px #ff0059aa;
+      width: 90%;
+      max-width: 400px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .container.hidden {
+      display: none;
+    }
+
+    img {
+      width: 100px;
+      margin-bottom: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #ff0059;
+      text-shadow: 0 0 10px #ff0059aa;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s;
+      box-shadow: 0 0 10px #ff0059;
+    }
+
+    input:focus, select:focus {
+      box-shadow: 0 0 15px #ff0059, 0 0 25px #ff0059aa;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      color: #fff;
+      background: linear-gradient(90deg, #ff0059, #ff3c78);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px #ff0059;
+    }
+
+    button:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #ff0059, 0 0 40px #ff3c78;
+    }
+
+    button:disabled {
+      background: #444;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 15px;
+      color: #00ffaa;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.85; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      h2 { font-size: 22px; }
+      input, select, button { font-size: 14px; }
+    }
+
+    /* Anti Screenshot Overlay */
+    #antiScreenOverlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      background: black;
+      opacity: 1;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+
+  <!-- Black overlay to attempt screenshot protection -->
+  <div id="antiScreenOverlay"></div>
+
+  <!-- START SCREEN -->
+  <div class="container" id="startScreen">
+    <h2>WELCOME</h2>
+    <button onclick="showAttack()">🔓 Click to Enter</button>
+  </div>
+
+  <!-- ATTACK MENU -->
+  <div class="container hidden" id="attackMenu">
+    <img src="https://cdn1.iconfinder.com/data/icons/hawcons/32/698425-icon-21-eye-hidden-512.png" alt="Eyes" />
+    <h2>Attack Menu</h2>
+    <input type="text" id="targetNumber" placeholder="Target number (e.g. +62 812xxx)" />
+    <select id="bugType">
+      <option value="">-- Select Bug Type --</option>
+      <option value="Kill Invisible">Kill Invisible</option>
+      <option value="Ghost Lag">Ghost Lag</option>
+      <option value="Freeze Crash">Freeze Crash</option>
+    </select>
+    <button id="sendBtn" onclick="sendBug()">▶ SEND BUG</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const sendBtn = document.getElementById("sendBtn");
+    const statusText = document.getElementById("status");
+
+    function showAttack() {
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("attackMenu").classList.remove("hidden");
+    }
+
+    function sendBug() {
+      const number = document.getElementById("targetNumber").value.trim();
+      const bug = document.getElementById("bugType").value;
+
+      if (!number.startsWith("+62")) {
+        statusText.style.color = "#ff5555";
+        statusText.innerText = "❌ Nomor harus diawali dengan +62";
+        return;
+      }
+
+      if (!bug) {
+        statusText.style.color = "#ff5555";
+        statusText.innerText = "❌ Pilih jenis bug terlebih dahulu";
+        return;
+      }
+
+      sendBtn.disabled = true;
+      statusText.style.color = "#00ffff";
+      statusText.innerText = "🔄 Sending bug to " + number + "...";
+
+      setTimeout(() => {
+        statusText.style.color = "#00ff88";
+        statusText.innerText = `✅ Bug "${bug}" sent to ${number}`;
+
+        let countdown = 10;
+        const interval = setInterval(() => {
+          countdown--;
+          statusText.style.color = "#ffaa00";
+          statusText.innerText = `⏳ Tunggu ${countdown} detik...`;
+
+          if (countdown <= 0) {
+            clearInterval(interval);
+            sendBtn.disabled = false;
+            statusText.style.color = "#00ffaa";
+            statusText.innerText = "✅ Siap kirim bug lagi";
+          }
+        }, 1000);
+      }, 2000);
+    }
+
+    // 🔒 Cegah Screenshot dengan DevTools (deteksi)
+    setInterval(() => {
+      if (window.outerWidth - window.innerWidth > 100 || window.outerHeight - window.innerHeight > 100) {
+        document.getElementById("antiScreenOverlay").style.display = "block";
+      } else {
+        document.getElementById("antiScreenOverlay").style.display = "none";
+      }
+    }, 500);
+
+    // 🔒 Cegah Copy/Paste Keyboard
+    document.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey && (e.key === "c" || e.key === "u" || e.key === "s")) || e.key === "PrintScreen") {
+        e.preventDefault();
+        alert("❌ Tidak diizinkan menyalin atau screenshot halaman ini.");
+      }
+    });
+
+    // 🔒 Cegah pinch zoom dan double-tap zoom
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
+    document.addEventListener('touchstart', function preventZoom(e) {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Blok developer tools shortcut
+    document.onkeydown = function(e) {
+      if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase()))) {
+        return false;
+      }
+    }
+  </script>
+</body>
+</html>
